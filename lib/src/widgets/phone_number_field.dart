@@ -340,16 +340,21 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
     return showMaterialModalBottomSheet<Country>(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => _ModalCountryList(
-        theme: pickerTheme,
-        searchEnabled: _effectiveSearchEnabled,
-        config: widget.config,
-        selectedCountry: _selectedCountry,
-        showFlag: widget.showFlag,
-        flagSize: widget.flagSize,
-        flagBorderRadius: widget.flagBorderRadius,
-        onSelected: (c) => Navigator.pop(ctx, c),
-        isBottomSheet: true,
+      builder: (ctx) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(ctx).viewInsets.bottom,
+        ),
+        child: _ModalCountryList(
+          theme: pickerTheme,
+          searchEnabled: _effectiveSearchEnabled,
+          config: widget.config,
+          selectedCountry: _selectedCountry,
+          showFlag: widget.showFlag,
+          flagSize: widget.flagSize,
+          flagBorderRadius: widget.flagBorderRadius,
+          onSelected: (c) => Navigator.pop(ctx, c),
+          isBottomSheet: true,
+        ),
       ),
     );
   }

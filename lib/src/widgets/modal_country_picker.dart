@@ -60,13 +60,20 @@ class ModalCountryPicker {
           onClose: onClose ?? () => Navigator.of(context).pop(),
         );
 
+        Widget result = picker;
         if (constraints != null) {
-          return ConstrainedBox(
+          result = ConstrainedBox(
             constraints: constraints,
-            child: picker,
+            child: result,
           );
         }
-        return picker;
+
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: result,
+        );
       },
     );
   }
