@@ -183,6 +183,7 @@ class CountryPickerConfig {
     this.searchHint = 'Search countries...',
     this.emptyStateMessage = 'No countries found',
     this.selectCountryHintText = 'Select a country',
+    this.emptyStateBuilder,
     this.groupByRegion = false,
     this.groupBySubregion = false,
     this.sortByName = true,
@@ -266,6 +267,10 @@ class CountryPickerConfig {
 
   /// Hint text shown when no country is selected (e.g. "Select a country").
   final String selectCountryHintText;
+
+  /// Optional builder to display a custom empty state widget when no countries are found.
+  /// If provided, this overrides [emptyStateMessage] and [Theme.emptyStateIcon].
+  final WidgetBuilder? emptyStateBuilder;
 
   /// Whether to group countries by region
   final bool groupByRegion;
@@ -408,8 +413,7 @@ class _CountryPickerState extends State<CountryPicker> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final locale =
-        widget.config.locale ?? Localizations.localeOf(context).languageCode;
+    final locale = widget.config.locale ?? Localizations.localeOf(context).languageCode;
     if (locale != _effectiveLocale) {
       _effectiveLocale = locale;
       _initializeCountries();
@@ -456,26 +460,22 @@ class _CountryPickerState extends State<CountryPicker> {
     // Filter by regions
     if (widget.config.includeRegions.isNotEmpty) {
       filtered = filtered
-          .where((country) =>
-              widget.config.includeRegions.contains(country.region))
+          .where((country) => widget.config.includeRegions.contains(country.region))
           .toList();
     } else if (widget.config.excludeRegions.isNotEmpty) {
       filtered = filtered
-          .where((country) =>
-              !widget.config.excludeRegions.contains(country.region))
+          .where((country) => !widget.config.excludeRegions.contains(country.region))
           .toList();
     }
 
     // Filter by subregions
     if (widget.config.includeSubregions.isNotEmpty) {
       filtered = filtered
-          .where((country) =>
-              widget.config.includeSubregions.contains(country.subregion))
+          .where((country) => widget.config.includeSubregions.contains(country.subregion))
           .toList();
     } else if (widget.config.excludeSubregions.isNotEmpty) {
       filtered = filtered
-          .where((country) =>
-              !widget.config.excludeSubregions.contains(country.subregion))
+          .where((country) => !widget.config.excludeSubregions.contains(country.subregion))
           .toList();
     }
 
@@ -498,8 +498,7 @@ class _CountryPickerState extends State<CountryPicker> {
 
   void _onSearchChanged(String query) {
     _debounceTimer?.cancel();
-    _debounceTimer =
-        Timer(Duration(milliseconds: widget.config.searchDebounceMs), () {
+    _debounceTimer = Timer(Duration(milliseconds: widget.config.searchDebounceMs), () {
       setState(() {
         _searchQuery = query;
         _filteredCountries = _searchCountries(query);
@@ -523,8 +522,8 @@ class _CountryPickerState extends State<CountryPicker> {
           country.region.toLowerCase().contains(lowercaseQuery) ||
           country.subregion.toLowerCase().contains(lowercaseQuery) ||
           country.callingCodes.any((code) => code.contains(query)) ||
-          country.nameTranslations.values.any((translation) =>
-              translation.toLowerCase().contains(lowercaseQuery));
+          country.nameTranslations.values
+              .any((translation) => translation.toLowerCase().contains(lowercaseQuery));
     }).toList();
   }
 
@@ -557,8 +556,7 @@ class _CountryPickerState extends State<CountryPicker> {
         decoration: theme?.searchInputDecoration ??
             InputDecoration(
               hintText: theme?.searchHintText ?? config.searchHint,
-              hintStyle: theme?.searchBarHintStyle ??
-                  TextStyle(color: Colors.grey[600]),
+              hintStyle: theme?.searchBarHintStyle ?? TextStyle(color: Colors.grey[600]),
               prefixIcon: Icon(
                 theme?.searchIcon ?? CountrifyIcons.search,
                 color: theme?.searchBarIconColor ?? Colors.grey[600],
@@ -590,8 +588,7 @@ class _CountryPickerState extends State<CountryPicker> {
   Widget _buildCountryItem(Country country) {
     final theme = widget.theme;
     final config = widget.config;
-    final isSelected =
-        _effectiveInitialCountry?.alpha2Code == country.alpha2Code;
+    final isSelected = _effectiveInitialCountry?.alpha2Code == country.alpha2Code;
 
     return Container(
       height: config.itemHeight,
@@ -600,19 +597,15 @@ class _CountryPickerState extends State<CountryPicker> {
         color: isSelected
             ? (theme?.countryItemSelectedColor ?? Colors.blue[50])
             : (theme?.countryItemBackgroundColor ?? Colors.transparent),
-        borderRadius:
-            theme?.countryItemBorderRadius ?? BorderRadius.circular(8),
+        borderRadius: theme?.countryItemBorderRadius ?? BorderRadius.circular(8),
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: () => _onCountrySelected(country),
-          borderRadius:
-              theme?.countryItemBorderRadius ?? BorderRadius.circular(8),
-          splashColor:
-              config.enableRipple ? Colors.blue[100] : Colors.transparent,
-          highlightColor:
-              config.enableRipple ? Colors.blue[50] : Colors.transparent,
+          borderRadius: theme?.countryItemBorderRadius ?? BorderRadius.circular(8),
+          splashColor: config.enableRipple ? Colors.blue[100] : Colors.transparent,
+          highlightColor: config.enableRipple ? Colors.blue[50] : Colors.transparent,
           child: Padding(
             padding: theme?.countryItemPadding ??
                 const EdgeInsets.symmetric(
@@ -686,8 +679,7 @@ class _CountryPickerState extends State<CountryPicker> {
               child: Center(
                 child: Text(
                   country.flagEmoji,
-                  style: theme?.flagEmojiTextStyle ??
-                      const TextStyle(fontSize: 16),
+                  style: theme?.flagEmojiTextStyle ?? const TextStyle(fontSize: 16),
                 ),
               ),
             );
@@ -729,6 +721,10 @@ class _CountryPickerState extends State<CountryPicker> {
   Widget _buildEmptyState() {
     final theme = widget.theme;
     final config = widget.config;
+
+    if (config.emptyStateBuilder != null) {
+      return config.emptyStateBuilder!(context);
+    }
 
     return Center(
       child: Column(
@@ -813,8 +809,7 @@ class _CountryPickerState extends State<CountryPicker> {
                     else
                       IconButton(
                         icon: Icon(widget.theme?.closeIcon ?? CountrifyIcons.x),
-                        onPressed:
-                            widget.onClose ?? () => Navigator.of(context).pop(),
+                        onPressed: widget.onClose ?? () => Navigator.of(context).pop(),
                       ),
                   ],
                 ],
@@ -833,8 +828,7 @@ class _CountryPickerState extends State<CountryPicker> {
                     thumbVisibility: true,
                     trackVisibility: true,
                     thickness: theme?.scrollbarThickness ?? 6.0,
-                    radius: theme?.scrollbarRadius?.topLeft ??
-                        const Radius.circular(3),
+                    radius: theme?.scrollbarRadius?.topLeft ?? const Radius.circular(3),
                     child: _buildCountriesList(),
                   )
                 : _buildCountriesList(),

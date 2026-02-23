@@ -21,6 +21,7 @@ class CountryPickerConfig {
     this.searchHintText = 'Search countries...',
     this.emptyStateText = 'No countries found',
     this.selectCountryHintText = 'Select a country',
+    this.emptyStateBuilder,
   });
 
   /// Locale code for displaying country names in a specific language.
@@ -64,6 +65,10 @@ class CountryPickerConfig {
   /// Hint text shown when no country is selected.
   final String selectCountryHintText;
 
+  /// Optional builder to display a custom empty state widget when no countries are found.
+  /// If provided, this overrides [emptyStateText] and [Theme.emptyStateIcon].
+  final WidgetBuilder? emptyStateBuilder;
+
   /// Copy with method.
   CountryPickerConfig copyWith({
     String? locale,
@@ -79,6 +84,7 @@ class CountryPickerConfig {
     String? searchHintText,
     String? emptyStateText,
     String? selectCountryHintText,
+    WidgetBuilder? emptyStateBuilder,
   }) {
     return CountryPickerConfig(
       locale: locale ?? this.locale,
@@ -93,8 +99,8 @@ class CountryPickerConfig {
       titleText: titleText ?? this.titleText,
       searchHintText: searchHintText ?? this.searchHintText,
       emptyStateText: emptyStateText ?? this.emptyStateText,
-      selectCountryHintText:
-          selectCountryHintText ?? this.selectCountryHintText,
+      selectCountryHintText: selectCountryHintText ?? this.selectCountryHintText,
+      emptyStateBuilder: emptyStateBuilder ?? this.emptyStateBuilder,
     );
   }
 }

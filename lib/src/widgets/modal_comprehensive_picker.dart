@@ -47,14 +47,13 @@ class ModalComprehensivePicker {
     String filterAllText = 'All',
     String filterCancelText = 'Cancel',
     String filterApplyText = 'Apply',
-    Widget Function(BuildContext context, Country country, bool isSelected)?
-        customCountryBuilder,
+    Widget Function(BuildContext context, Country country, bool isSelected)? customCountryBuilder,
     Widget Function(BuildContext context)? customHeaderBuilder,
-    Widget Function(BuildContext context, TextEditingController controller,
-            ValueChanged<String> onChanged)?
+    Widget Function(
+            BuildContext context, TextEditingController controller, ValueChanged<String> onChanged)?
         customSearchBuilder,
-    Widget Function(BuildContext context, CountryFilter filter,
-            ValueChanged<CountryFilter> onChanged)?
+    Widget Function(
+            BuildContext context, CountryFilter filter, ValueChanged<CountryFilter> onChanged)?
         customFilterBuilder,
     bool hapticFeedback = true,
     Duration animationDuration = const Duration(milliseconds: 300),
@@ -165,14 +164,13 @@ class ModalComprehensivePicker {
     String filterAllText = 'All',
     String filterCancelText = 'Cancel',
     String filterApplyText = 'Apply',
-    Widget Function(BuildContext context, Country country, bool isSelected)?
-        customCountryBuilder,
+    Widget Function(BuildContext context, Country country, bool isSelected)? customCountryBuilder,
     Widget Function(BuildContext context)? customHeaderBuilder,
-    Widget Function(BuildContext context, TextEditingController controller,
-            ValueChanged<String> onChanged)?
+    Widget Function(
+            BuildContext context, TextEditingController controller, ValueChanged<String> onChanged)?
         customSearchBuilder,
-    Widget Function(BuildContext context, CountryFilter filter,
-            ValueChanged<CountryFilter> onChanged)?
+    Widget Function(
+            BuildContext context, CountryFilter filter, ValueChanged<CountryFilter> onChanged)?
         customFilterBuilder,
     bool hapticFeedback = true,
     Duration animationDuration = const Duration(milliseconds: 300),
@@ -190,8 +188,7 @@ class ModalComprehensivePicker {
       barrierLabel: barrierLabel ?? 'Close dialog',
       useRootNavigator: useRootNavigator,
       routeSettings: routeSettings,
-      pageBuilder: (context, animation, secondaryAnimation) =>
-          ComprehensiveCountryPicker(
+      pageBuilder: (context, animation, secondaryAnimation) => ComprehensiveCountryPicker(
         initialCountryCode: initialCountryCode,
         onCountrySelected: onCountrySelected,
         onCountryChanged: onCountryChanged,
@@ -276,14 +273,13 @@ class ModalComprehensivePicker {
     String filterAllText = 'All',
     String filterCancelText = 'Cancel',
     String filterApplyText = 'Apply',
-    Widget Function(BuildContext context, Country country, bool isSelected)?
-        customCountryBuilder,
+    Widget Function(BuildContext context, Country country, bool isSelected)? customCountryBuilder,
     Widget Function(BuildContext context)? customHeaderBuilder,
-    Widget Function(BuildContext context, TextEditingController controller,
-            ValueChanged<String> onChanged)?
+    Widget Function(
+            BuildContext context, TextEditingController controller, ValueChanged<String> onChanged)?
         customSearchBuilder,
-    Widget Function(BuildContext context, CountryFilter filter,
-            ValueChanged<CountryFilter> onChanged)?
+    Widget Function(
+            BuildContext context, CountryFilter filter, ValueChanged<CountryFilter> onChanged)?
         customFilterBuilder,
     bool hapticFeedback = true,
     Duration animationDuration = const Duration(milliseconds: 300),
@@ -291,8 +287,7 @@ class ModalComprehensivePicker {
     bool useRootNavigator = false,
     RouteSettings? routeSettings,
   }) async {
-    final result = await Navigator.of(context, rootNavigator: useRootNavigator)
-        .push<Country>(
+    final result = await Navigator.of(context, rootNavigator: useRootNavigator).push<Country>(
       MaterialPageRoute<Country>(
         settings: routeSettings,
         builder: (context) => ComprehensiveCountryPicker(
@@ -425,14 +420,13 @@ class ModalComprehensivePicker {
     String filterAllText = 'All',
     String filterCancelText = 'Cancel',
     String filterApplyText = 'Apply',
-    Widget Function(BuildContext context, Country country, bool isSelected)?
-        customCountryBuilder,
+    Widget Function(BuildContext context, Country country, bool isSelected)? customCountryBuilder,
     Widget Function(BuildContext context)? customHeaderBuilder,
-    Widget Function(BuildContext context, TextEditingController controller,
-            ValueChanged<String> onChanged)?
+    Widget Function(
+            BuildContext context, TextEditingController controller, ValueChanged<String> onChanged)?
         customSearchBuilder,
-    Widget Function(BuildContext context, CountryFilter filter,
-            ValueChanged<CountryFilter> onChanged)?
+    Widget Function(
+            BuildContext context, CountryFilter filter, ValueChanged<CountryFilter> onChanged)?
         customFilterBuilder,
     bool hapticFeedback = true,
     Duration animationDuration = const Duration(milliseconds: 300),
