@@ -4,6 +4,7 @@ import 'package:countrify/src/icons/countrify_icons.dart';
 import 'package:countrify/src/models/country.dart';
 import 'package:countrify/src/models/country_code.dart';
 import 'package:countrify/src/utils/country_utils.dart';
+import 'package:countrify/src/widgets/colored_safe_area.dart';
 import 'package:countrify/src/widgets/countrify_field_style.dart';
 import 'package:countrify/src/widgets/country_picker_config.dart';
 import 'package:countrify/src/widgets/country_picker_theme.dart';
@@ -363,8 +364,8 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
           borderRadius: pickerTheme.borderRadius ?? const BorderRadius.all(Radius.circular(20)),
         ),
         child: SizedBox(
-          width: MediaQuery.of(ctx).size.width * 0.85,
-          height: MediaQuery.of(ctx).size.height * 0.55,
+          width: MediaQuery.sizeOf(ctx).width * 0.85,
+          height: MediaQuery.sizeOf(ctx).height * 0.55,
           child: _ModalCountryList(
             theme: pickerTheme,
             searchEnabled: _effectiveSearchEnabled,
@@ -1013,7 +1014,7 @@ class _ModalCountryListState extends State<_ModalCountryList> {
   Widget build(BuildContext context) {
     final theme = widget.theme;
 
-    final body = Column(
+    Widget body = Column(
       children: [
         if (widget.isBottomSheet && widget.config?.bottomSheetDragHandleBuilder != null)
           widget.config!.bottomSheetDragHandleBuilder!(context),
@@ -1024,8 +1025,19 @@ class _ModalCountryListState extends State<_ModalCountryList> {
     );
 
     if (widget.isBottomSheet) {
+      if (widget.config?.useSafeArea ?? true) {
+        body = ColoredSafeArea(
+          color: widget.config?.safeAreaColor,
+          top: widget.config?.safeAreaTop ?? true,
+          bottom: widget.config?.safeAreaBottom ?? true,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          child: body,
+        );
+      }
+
       return Container(
-        height: MediaQuery.of(context).size.height * 0.55,
+        clipBehavior: Clip.antiAlias,
+        height: MediaQuery.sizeOf(context).height * 0.55,
         decoration: BoxDecoration(
           color: theme.backgroundColor ?? Colors.white,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -1038,6 +1050,7 @@ class _ModalCountryListState extends State<_ModalCountryList> {
   }
 
   Widget _buildHeader(CountryPickerTheme theme) {
+    final config = widget.config ?? const CountryPickerConfig();
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
@@ -1046,15 +1059,25 @@ class _ModalCountryListState extends State<_ModalCountryList> {
             widget.isBottomSheet ? const BorderRadius.vertical(top: Radius.circular(20)) : null,
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text((widget.config ?? const CountryPickerConfig()).titleText,
-              style: theme.headerTextStyle),
-          const Spacer(),
-          GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child:
-                Icon(theme.closeIcon ?? CountrifyIcons.x, color: theme.headerIconColor, size: 22),
+          if (config.centerTitle && config.showCloseButton)
+            const SizedBox(width: 48), // Balance for centering relative to close icon
+          Expanded(
+            child: Text(
+              config.titleText,
+              textAlign: config.centerTitle ? TextAlign.center : TextAlign.start,
+              style: theme.headerTextStyle,
+            ),
           ),
+          if (config.showCloseButton) ...[
+            GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child:
+                  Icon(theme.closeIcon ?? CountrifyIcons.x, color: theme.headerIconColor, size: 22),
+            ),
+          ] else if (config.centerTitle)
+            const SizedBox(width: 48),
         ],
       ),
     );

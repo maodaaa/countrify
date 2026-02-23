@@ -1,12 +1,14 @@
 import 'dart:async';
+
 import 'package:countrify/src/icons/countrify_icons.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:countrify/src/models/country.dart';
 import 'package:countrify/src/models/country_code.dart';
 import 'package:countrify/src/utils/country_utils.dart';
-import 'package:countrify/src/widgets/country_picker_theme.dart';
+import 'package:countrify/src/widgets/colored_safe_area.dart';
 import 'package:countrify/src/widgets/country_picker_config.dart';
+import 'package:countrify/src/widgets/country_picker_theme.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 /// {@template comprehensive_country_picker}
 /// A highly customizable and modern country picker with extensive styling options
@@ -23,6 +25,7 @@ class ComprehensiveCountryPicker extends StatefulWidget {
     this.theme,
     this.config,
     this.pickerType = CountryPickerType.bottomSheet,
+    this.showCloseButton = true,
     this.showPhoneCode = true,
     this.showFlag = true,
     this.showCountryName = true,
@@ -85,6 +88,9 @@ class ComprehensiveCountryPicker extends StatefulWidget {
 
   /// Type of picker to display
   final CountryPickerType pickerType;
+
+  /// Whether to show the close button
+  final bool showCloseButton;
 
   /// Whether to show phone code
   final bool showPhoneCode;
@@ -462,9 +468,30 @@ class _ComprehensiveCountryPickerState extends State<ComprehensiveCountryPicker>
   }
 
   Widget _buildBottomSheetPicker(CountryPickerTheme theme, CountryPickerConfig config) {
-    final screenHeight = MediaQuery.of(context).size.height;
+    final screenHeight = MediaQuery.sizeOf(context).height;
     final targetHeight =
         (widget.maxHeight ?? screenHeight * 0.8).clamp(widget.minHeight, screenHeight);
+
+    Widget body = Column(
+      children: [
+        if (config.bottomSheetDragHandleBuilder != null)
+          config.bottomSheetDragHandleBuilder!(context),
+        _buildHeader(theme, config),
+        if (widget.searchEnabled) _buildSearchBar(theme, config),
+        if (widget.filterEnabled) _buildFilterBar(theme, config),
+        Expanded(child: _buildCountryList(theme, config)),
+      ],
+    );
+
+    if (config.useSafeArea) {
+      body = ColoredSafeArea(
+        color: config.safeAreaColor,
+        top: config.safeAreaTop,
+        bottom: config.safeAreaBottom,
+        borderRadius: theme.borderRadius ?? const BorderRadius.vertical(top: Radius.circular(20)),
+        child: body,
+      );
+    }
 
     return Container(
       height: targetHeight,
@@ -473,21 +500,12 @@ class _ComprehensiveCountryPickerState extends State<ComprehensiveCountryPicker>
         color: theme.backgroundColor,
         borderRadius: theme.borderRadius ?? const BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      child: Column(
-        children: [
-          if (config.bottomSheetDragHandleBuilder != null)
-            config.bottomSheetDragHandleBuilder!(context),
-          _buildHeader(theme, config),
-          if (widget.searchEnabled) _buildSearchBar(theme, config),
-          if (widget.filterEnabled) _buildFilterBar(theme, config),
-          Expanded(child: _buildCountryList(theme, config)),
-        ],
-      ),
+      child: body,
     );
   }
 
   Widget _buildDialogPicker(CountryPickerTheme theme, CountryPickerConfig config) {
-    final screenHeight = MediaQuery.of(context).size.height;
+    final screenHeight = MediaQuery.sizeOf(context).height;
     final targetHeight =
         (widget.maxHeight ?? screenHeight * 0.8).clamp(widget.minHeight, screenHeight);
 
@@ -499,7 +517,7 @@ class _ComprehensiveCountryPickerState extends State<ComprehensiveCountryPicker>
         borderRadius: theme.borderRadius ?? const BorderRadius.all(Radius.circular(20)),
       ),
       child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.9,
+        width: MediaQuery.sizeOf(context).width * 0.9,
         height: targetHeight,
         child: Column(
           children: [
@@ -522,10 +540,14 @@ class _ComprehensiveCountryPickerState extends State<ComprehensiveCountryPicker>
           config.titleText,
           style: theme.appBarTitleTextStyle ?? theme.headerTextStyle,
         ),
-        leading: IconButton(
-          icon: Icon(theme.closeIcon ?? CountrifyIcons.x, color: theme.headerIconColor),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        centerTitle: config.centerTitle,
+        leading: widget.showCloseButton
+            ? IconButton(
+                icon: Icon(theme.closeIcon ?? CountrifyIcons.x, color: theme.headerIconColor),
+                onPressed: () => Navigator.of(context).pop(),
+              )
+            : const SizedBox.shrink(),
+        automaticallyImplyLeading: widget.showCloseButton,
         actions: [
           if (widget.filterEnabled)
             IconButton(
@@ -784,16 +806,24 @@ class _ComprehensiveCountryPickerState extends State<ComprehensiveCountryPicker>
         borderRadius: theme.borderRadius ?? const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            config.titleText,
-            style: theme.headerTextStyle,
+          if (config.centerTitle && widget.showCloseButton && config.showCloseButton)
+            const SizedBox(width: 48), // Balance for centering relative to close icon
+          Expanded(
+            child: Text(
+              config.titleText,
+              textAlign: config.centerTitle ? TextAlign.center : TextAlign.start,
+              style: theme.headerTextStyle,
+            ),
           ),
-          const Spacer(),
-          IconButton(
-            icon: Icon(theme.closeIcon ?? CountrifyIcons.x, color: theme.headerIconColor),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
+          if (widget.showCloseButton && config.showCloseButton) ...[
+            IconButton(
+              icon: Icon(theme.closeIcon ?? CountrifyIcons.x, color: theme.headerIconColor),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ] else if (config.centerTitle)
+            const SizedBox(width: 48),
         ],
       ),
     );

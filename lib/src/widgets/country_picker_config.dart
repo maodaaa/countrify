@@ -23,6 +23,12 @@ class CountryPickerConfig {
     this.selectCountryHintText = 'Select a country',
     this.emptyStateBuilder,
     this.bottomSheetDragHandleBuilder,
+    this.showCloseButton = true,
+    this.centerTitle = false,
+    this.useSafeArea = true,
+    this.safeAreaColor,
+    this.safeAreaTop = true,
+    this.safeAreaBottom = true,
   });
 
   /// Locale code for displaying country names in a specific language.
@@ -73,6 +79,24 @@ class CountryPickerConfig {
   /// Optional builder to display a custom drag handle widget at the top of bottom sheets.
   final WidgetBuilder? bottomSheetDragHandleBuilder;
 
+  /// Whether to show the close button globally in pickers. Defaults to true.
+  final bool showCloseButton;
+
+  /// Whether to center the title horizontally within the header. Defaults to false.
+  final bool centerTitle;
+
+  /// Whether to wrap the picker content in a [ColoredSafeArea]. Defaults to true.
+  final bool useSafeArea;
+
+  /// Optional background color for the [ColoredSafeArea]. Defaults to white.
+  final Color? safeAreaColor;
+
+  /// Whether to apply safe area padding to the top. Defaults to true.
+  final bool safeAreaTop;
+
+  /// Whether to apply safe area padding to the bottom. Defaults to true.
+  final bool safeAreaBottom;
+
   /// Copy with method.
   CountryPickerConfig copyWith({
     String? locale,
@@ -90,6 +114,12 @@ class CountryPickerConfig {
     String? selectCountryHintText,
     WidgetBuilder? emptyStateBuilder,
     WidgetBuilder? bottomSheetDragHandleBuilder,
+    bool? showCloseButton,
+    bool? centerTitle,
+    bool? useSafeArea,
+    Color? safeAreaColor,
+    bool? safeAreaTop,
+    bool? safeAreaBottom,
   }) {
     return CountryPickerConfig(
       locale: locale ?? this.locale,
@@ -108,6 +138,12 @@ class CountryPickerConfig {
       emptyStateBuilder: emptyStateBuilder ?? this.emptyStateBuilder,
       bottomSheetDragHandleBuilder:
           bottomSheetDragHandleBuilder ?? this.bottomSheetDragHandleBuilder,
+      showCloseButton: showCloseButton ?? this.showCloseButton,
+      centerTitle: centerTitle ?? this.centerTitle,
+      useSafeArea: useSafeArea ?? this.useSafeArea,
+      safeAreaColor: safeAreaColor ?? this.safeAreaColor,
+      safeAreaTop: safeAreaTop ?? this.safeAreaTop,
+      safeAreaBottom: safeAreaBottom ?? this.safeAreaBottom,
     );
   }
 }

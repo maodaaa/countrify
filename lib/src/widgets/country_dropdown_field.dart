@@ -139,14 +139,14 @@ class _CountryDropdownFieldState extends State<CountryDropdownField> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (sheetContext) => Container(
-        height: MediaQuery.of(sheetContext).size.height * 0.8,
+        height: MediaQuery.sizeOf(sheetContext).height * 0.8,
         decoration: BoxDecoration(
           color: widget.theme?.backgroundColor ?? Colors.white,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: ComprehensiveCountryPicker(
-          initialCountryCode: CountryCodeExtension.fromAlpha2Code(
-              _selectedCountry?.alpha2Code ?? ''),
+          initialCountryCode:
+              CountryCodeExtension.fromAlpha2Code(_selectedCountry?.alpha2Code ?? ''),
           theme: widget.theme,
           config: widget.config,
           showPhoneCode: widget.showPhoneCode,
@@ -163,11 +163,11 @@ class _CountryDropdownFieldState extends State<CountryDropdownField> {
       context: context,
       builder: (dialogContext) => Dialog(
         child: SizedBox(
-          width: MediaQuery.of(dialogContext).size.width * 0.9,
-          height: MediaQuery.of(dialogContext).size.height * 0.8,
+          width: MediaQuery.sizeOf(dialogContext).width * 0.9,
+          height: MediaQuery.sizeOf(dialogContext).height * 0.8,
           child: ComprehensiveCountryPicker(
-            initialCountryCode: CountryCodeExtension.fromAlpha2Code(
-                _selectedCountry?.alpha2Code ?? ''),
+            initialCountryCode:
+                CountryCodeExtension.fromAlpha2Code(_selectedCountry?.alpha2Code ?? ''),
             theme: widget.theme,
             config: widget.config,
             pickerType: CountryPickerType.dialog,
@@ -185,8 +185,8 @@ class _CountryDropdownFieldState extends State<CountryDropdownField> {
     return Navigator.of(context).push<Country>(
       MaterialPageRoute(
         builder: (routeContext) => ComprehensiveCountryPicker(
-          initialCountryCode: CountryCodeExtension.fromAlpha2Code(
-              _selectedCountry?.alpha2Code ?? ''),
+          initialCountryCode:
+              CountryCodeExtension.fromAlpha2Code(_selectedCountry?.alpha2Code ?? ''),
           theme: widget.theme,
           config: widget.config,
           pickerType: CountryPickerType.fullScreen,
@@ -224,8 +224,7 @@ class _CountryDropdownFieldState extends State<CountryDropdownField> {
   @override
   Widget build(BuildContext context) {
     final theme = widget.theme ?? CountryPickerTheme.defaultTheme();
-    final effectiveStyle =
-        widget.style ?? CountrifyFieldStyle.defaultStyle();
+    final effectiveStyle = widget.style ?? CountrifyFieldStyle.defaultStyle();
 
     final prefixWidget = _selectedCountry != null && widget.showFlag
         ? Padding(
@@ -239,8 +238,7 @@ class _CountryDropdownFieldState extends State<CountryDropdownField> {
       color: widget.enabled ? null : Colors.grey,
     );
 
-    final borderRadius =
-        effectiveStyle.fieldBorderRadius ?? BorderRadius.circular(12);
+    final borderRadius = effectiveStyle.fieldBorderRadius ?? BorderRadius.circular(12);
 
     final decoration = effectiveStyle.toInputDecoration(
       prefixIconOverride: prefixWidget,
@@ -248,9 +246,7 @@ class _CountryDropdownFieldState extends State<CountryDropdownField> {
     );
 
     return InkWell(
-      onTap: widget.enabled && widget.pickerType != PickerDisplayType.none
-          ? _showPicker
-          : null,
+      onTap: widget.enabled && widget.pickerType != PickerDisplayType.none ? _showPicker : null,
       borderRadius: borderRadius,
       child: InputDecorator(
         decoration: decoration,
@@ -258,8 +254,7 @@ class _CountryDropdownFieldState extends State<CountryDropdownField> {
         child: _selectedCountry != null
             ? Text(
                 _getDisplayText(),
-                style: effectiveStyle.selectedCountryTextStyle ??
-                    theme.countryNameTextStyle,
+                style: effectiveStyle.selectedCountryTextStyle ?? theme.countryNameTextStyle,
               )
             : null,
       ),
@@ -276,8 +271,7 @@ class _CountryDropdownFieldState extends State<CountryDropdownField> {
       decoration: BoxDecoration(
         borderRadius: config.flagBorderRadius,
         border: config.flagBorderColor != null
-            ? Border.all(
-                color: config.flagBorderColor!, width: config.flagBorderWidth)
+            ? Border.all(color: config.flagBorderColor!, width: config.flagBorderWidth)
             : null,
       ),
       child: ClipRRect(
@@ -291,8 +285,7 @@ class _CountryDropdownFieldState extends State<CountryDropdownField> {
               child: Center(
                 child: Text(
                   country.flagEmoji,
-                  style:
-                      theme.flagEmojiTextStyle ?? const TextStyle(fontSize: 16),
+                  style: theme.flagEmojiTextStyle ?? const TextStyle(fontSize: 16),
                 ),
               ),
             );

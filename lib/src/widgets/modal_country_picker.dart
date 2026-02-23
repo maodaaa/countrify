@@ -1,6 +1,7 @@
 import 'package:countrify/src/icons/countrify_icons.dart';
 import 'package:countrify/src/models/country.dart';
 import 'package:countrify/src/models/country_code.dart';
+import 'package:countrify/src/widgets/colored_safe_area.dart';
 import 'package:countrify/src/widgets/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -46,9 +47,10 @@ class ModalCountryPicker {
       useRootNavigator: useRootNavigator,
       settings: routeSettings,
       builder: (context) {
+        final effectiveConfig = config ?? const CountryPickerConfig();
         final Widget picker = _CountryPickerModal(
           theme: theme,
-          config: config ?? const CountryPickerConfig(),
+          config: effectiveConfig,
           initialCountryCode: initialCountryCode,
           title: title,
           showTitle: showTitle,
@@ -98,18 +100,15 @@ class ModalCountryPicker {
       useRootNavigator: useRootNavigator,
       routeSettings: routeSettings,
       anchorPoint: anchorPoint,
-      builder: (BuildContext context) => Dialog(
-        clipBehavior: Clip.antiAlias,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Container(
-          width: MediaQuery.of(context).size.width * 0.9,
-          height: MediaQuery.of(context).size.height * 0.8,
+      builder: (BuildContext context) {
+        final effectiveConfig = config ?? const CountryPickerConfig();
+        final Widget dialogContent = Container(
+          width: MediaQuery.sizeOf(context).width * 0.9,
+          height: MediaQuery.sizeOf(context).height * 0.8,
           color: theme?.backgroundColor ?? Colors.white,
           child: _CountryPickerModal(
             theme: theme,
-            config: config ?? const CountryPickerConfig(),
+            config: effectiveConfig,
             initialCountryCode: initialCountryCode,
             title: title,
             showTitle: showTitle,
@@ -118,8 +117,16 @@ class ModalCountryPicker {
             showCloseButton: showCloseButton,
             onClose: onClose ?? () => Navigator.of(context).pop(),
           ),
-        ),
-      ),
+        );
+
+        return Dialog(
+          clipBehavior: Clip.antiAlias,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: dialogContent,
+        );
+      },
     );
   }
 
@@ -141,17 +148,22 @@ class ModalCountryPicker {
   }) async {
     return Navigator.of(context).push<Country>(
       MaterialPageRoute(
-        builder: (context) => _CountryPickerFullScreen(
-          theme: theme,
-          config: config ?? const CountryPickerConfig(),
-          initialCountryCode: initialCountryCode,
-          title: title,
-          showTitle: showTitle,
-          titleStyle: titleStyle,
-          closeButton: closeButton,
-          showCloseButton: showCloseButton,
-          onClose: onClose ?? () => Navigator.of(context).pop(),
-        ),
+        builder: (context) {
+          final effectiveConfig = config ?? const CountryPickerConfig();
+          Widget fullScreenContent = _CountryPickerFullScreen(
+            theme: theme,
+            config: effectiveConfig,
+            initialCountryCode: initialCountryCode,
+            title: title,
+            showTitle: showTitle,
+            titleStyle: titleStyle,
+            closeButton: closeButton,
+            showCloseButton: showCloseButton,
+            onClose: onClose ?? () => Navigator.of(context).pop(),
+          );
+
+          return fullScreenContent;
+        },
         maintainState: maintainState,
         fullscreenDialog: fullscreenDialog,
         settings: routeSettings,

@@ -4,6 +4,7 @@ import 'package:countrify/src/icons/countrify_icons.dart';
 import 'package:countrify/src/models/country.dart';
 import 'package:countrify/src/models/country_code.dart';
 import 'package:countrify/src/utils/country_utils.dart';
+import 'package:countrify/src/widgets/colored_safe_area.dart';
 import 'package:countrify/src/widgets/comprehensive_country_picker.dart';
 import 'package:countrify/src/widgets/country_picker_config.dart' as picker_config;
 import 'package:countrify/src/widgets/country_picker_theme.dart';
@@ -22,6 +23,7 @@ class PhoneCodePicker extends StatefulWidget {
     this.onCountryChanged,
     this.theme,
     this.config,
+    this.showCloseButton = true,
     this.showFlag = true,
     this.showCountryName = true,
     this.showDialCode = true,
@@ -64,6 +66,9 @@ class PhoneCodePicker extends StatefulWidget {
 
   /// Configuration options
   final picker_config.CountryPickerConfig? config;
+
+  /// Whether to show close button
+  final bool showCloseButton;
 
   /// Whether to show flag
   final bool showFlag;
@@ -300,33 +305,48 @@ class _PhoneCodePickerState extends State<PhoneCodePicker> with TickerProviderSt
 
   Widget _buildBottomSheetPicker(
       CountryPickerTheme theme, picker_config.CountryPickerConfig config) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.6,
+    Widget bodyContent = Column(
+      children: [
+        if (config.bottomSheetDragHandleBuilder != null)
+          config.bottomSheetDragHandleBuilder!(context),
+        _buildHeader(theme, config),
+        if (_effectiveSearchEnabled) _buildSearchBar(theme, config),
+        Expanded(child: _buildCountryList(theme, config)),
+      ],
+    );
+
+    if (config.useSafeArea) {
+      bodyContent = ColoredSafeArea(
+        color: config.safeAreaColor,
+        top: config.safeAreaTop,
+        bottom: config.safeAreaBottom,
+        borderRadius: theme.borderRadius ?? const BorderRadius.vertical(top: Radius.circular(20)),
+        child: bodyContent,
+      );
+    }
+
+    final Widget picker = Container(
+      clipBehavior: Clip.antiAlias,
+      height: MediaQuery.sizeOf(context).height * 0.6,
       decoration: BoxDecoration(
         color: theme.backgroundColor,
         borderRadius: theme.borderRadius ?? const BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      child: Column(
-        children: [
-          if (config.bottomSheetDragHandleBuilder != null)
-            config.bottomSheetDragHandleBuilder!(context),
-          _buildHeader(theme, config),
-          if (_effectiveSearchEnabled) _buildSearchBar(theme, config),
-          Expanded(child: _buildCountryList(theme, config)),
-        ],
-      ),
+      child: bodyContent,
     );
+
+    return picker;
   }
 
   Widget _buildDialogPicker(CountryPickerTheme theme, picker_config.CountryPickerConfig config) {
-    return Dialog(
+    final Widget picker = Dialog(
       backgroundColor: theme.backgroundColor,
       shape: RoundedRectangleBorder(
         borderRadius: theme.borderRadius ?? const BorderRadius.all(Radius.circular(20)),
       ),
       child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.9,
-        height: MediaQuery.of(context).size.height * 0.6,
+        width: MediaQuery.sizeOf(context).width * 0.9,
+        height: MediaQuery.sizeOf(context).height * 0.6,
         child: Column(
           children: [
             _buildHeader(theme, config),
@@ -336,11 +356,13 @@ class _PhoneCodePickerState extends State<PhoneCodePicker> with TickerProviderSt
         ),
       ),
     );
+
+    return picker;
   }
 
   Widget _buildFullScreenPicker(
       CountryPickerTheme theme, picker_config.CountryPickerConfig config) {
-    return Scaffold(
+    Widget picker = Scaffold(
       backgroundColor: theme.backgroundColor,
       appBar: AppBar(
         backgroundColor: theme.headerColor,
@@ -348,10 +370,14 @@ class _PhoneCodePickerState extends State<PhoneCodePicker> with TickerProviderSt
           config.titleText,
           style: theme.appBarTitleTextStyle ?? theme.headerTextStyle,
         ),
-        leading: IconButton(
-          icon: Icon(theme.closeIcon ?? CountrifyIcons.x, color: theme.headerIconColor),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        centerTitle: config.centerTitle,
+        leading: widget.showCloseButton && config.showCloseButton
+            ? IconButton(
+                icon: Icon(theme.closeIcon ?? CountrifyIcons.x, color: theme.headerIconColor),
+                onPressed: () => Navigator.of(context).pop(),
+              )
+            : const SizedBox.shrink(),
+        automaticallyImplyLeading: widget.showCloseButton && config.showCloseButton,
       ),
       body: Column(
         children: [
@@ -360,6 +386,8 @@ class _PhoneCodePickerState extends State<PhoneCodePicker> with TickerProviderSt
         ],
       ),
     );
+
+    return picker;
   }
 
   Widget _buildDropdownPicker(CountryPickerTheme theme, picker_config.CountryPickerConfig config) {
@@ -418,16 +446,24 @@ class _PhoneCodePickerState extends State<PhoneCodePicker> with TickerProviderSt
         borderRadius: theme.borderRadius ?? const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            config.titleText,
-            style: theme.headerTextStyle,
+          if (config.centerTitle && widget.showCloseButton && config.showCloseButton)
+            const SizedBox(width: 48), // Balance for centering relative to close icon
+          Expanded(
+            child: Text(
+              config.titleText,
+              textAlign: config.centerTitle ? TextAlign.center : TextAlign.start,
+              style: theme.headerTextStyle,
+            ),
           ),
-          const Spacer(),
-          IconButton(
-            icon: Icon(theme.closeIcon ?? CountrifyIcons.x, color: theme.headerIconColor),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
+          if (widget.showCloseButton && config.showCloseButton) ...[
+            IconButton(
+              icon: Icon(theme.closeIcon ?? CountrifyIcons.x, color: theme.headerIconColor),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ] else if (config.centerTitle)
+            const SizedBox(width: 48),
         ],
       ),
     );

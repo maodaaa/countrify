@@ -1,11 +1,13 @@
 import 'dart:async';
+
+import 'package:countrify/src/data/all_countries.dart';
 import 'package:countrify/src/icons/countrify_icons.dart';
-import 'package:countrify/src/utils/country_utils.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:countrify/src/models/country.dart';
 import 'package:countrify/src/models/country_code.dart';
-import 'package:countrify/src/data/all_countries.dart';
+import 'package:countrify/src/utils/country_utils.dart';
+import 'package:countrify/src/widgets/colored_safe_area.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 /// {@template country_picker_theme}
 /// Theme configuration for the country picker
@@ -185,6 +187,12 @@ class CountryPickerConfig {
     this.selectCountryHintText = 'Select a country',
     this.emptyStateBuilder,
     this.bottomSheetDragHandleBuilder,
+    this.showCloseButton = true,
+    this.centerTitle = false,
+    this.useSafeArea = true,
+    this.safeAreaColor,
+    this.safeAreaTop = true,
+    this.safeAreaBottom = true,
     this.groupByRegion = false,
     this.groupBySubregion = false,
     this.sortByName = true,
@@ -275,6 +283,24 @@ class CountryPickerConfig {
 
   /// Optional builder to display a custom drag handle widget at the top of bottom sheets.
   final WidgetBuilder? bottomSheetDragHandleBuilder;
+
+  /// Whether to show the close button globally in pickers. Defaults to true.
+  final bool showCloseButton;
+
+  /// Whether to center the title horizontally within the header. Defaults to false.
+  final bool centerTitle;
+
+  /// Whether to wrap the picker content in a [ColoredSafeArea]. Defaults to true.
+  final bool useSafeArea;
+
+  /// Optional background color for the [ColoredSafeArea]. Defaults to white.
+  final Color? safeAreaColor;
+
+  /// Whether to apply safe area padding to the top. Defaults to true.
+  final bool safeAreaTop;
+
+  /// Whether to apply safe area padding to the bottom. Defaults to true.
+  final bool safeAreaBottom;
 
   /// Whether to group countries by region
   final bool groupByRegion;
@@ -781,66 +807,83 @@ class _CountryPickerState extends State<CountryPicker> {
     final theme = widget.theme;
     final config = widget.config;
 
+    Widget body = Column(
+      children: [
+        if (config.bottomSheetDragHandleBuilder != null)
+          config.bottomSheetDragHandleBuilder!(context),
+        // Header
+        if (widget.showTitle || (widget.showCloseButton && config.showCloseButton)) ...[
+          Container(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                if (widget.showCloseButton && config.showCloseButton && config.centerTitle)
+                  const SizedBox(width: 48), // Balance close button space when centered
+                if (widget.showTitle) ...[
+                  Expanded(
+                    child: Text(
+                      widget.title ?? widget.config.titleText,
+                      textAlign: config.centerTitle ? TextAlign.center : TextAlign.start,
+                      style: widget.titleStyle ??
+                          const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ),
+                ],
+                if (widget.showCloseButton && config.showCloseButton) ...[
+                  if (widget.closeButton != null)
+                    widget.closeButton!
+                  else
+                    IconButton(
+                      icon: Icon(widget.theme?.closeIcon ?? CountrifyIcons.x),
+                      onPressed: widget.onClose ?? () => Navigator.of(context).pop(),
+                    ),
+                ] else if (config.centerTitle)
+                  const SizedBox(width: 48), // Balance if trailing missing but centered
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+        ],
+
+        // Search bar
+        _buildSearchBar(),
+
+        // Countries list
+        Expanded(
+          child: config.enableScrollbar
+              ? Scrollbar(
+                  thumbVisibility: true,
+                  trackVisibility: true,
+                  thickness: theme?.scrollbarThickness ?? 6.0,
+                  radius: theme?.scrollbarRadius?.topLeft ?? const Radius.circular(3),
+                  child: _buildCountriesList(),
+                )
+              : _buildCountriesList(),
+        ),
+      ],
+    );
+
+    if (config.useSafeArea) {
+      body = ColoredSafeArea(
+        color: config.safeAreaColor,
+        top: config.safeAreaTop,
+        bottom: config.safeAreaBottom,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        child: body,
+      );
+    }
+
     return Container(
-      height: config.maxHeight ?? MediaQuery.of(context).size.height * 0.8,
+      clipBehavior: Clip.antiAlias,
+      height: config.maxHeight ?? MediaQuery.sizeOf(context).height * 0.8,
       decoration: BoxDecoration(
         color: theme?.backgroundColor ?? Colors.white,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      child: Column(
-        children: [
-          if (config.bottomSheetDragHandleBuilder != null)
-            config.bottomSheetDragHandleBuilder!(context),
-          // Header
-          if (widget.showTitle || widget.showCloseButton) ...[
-            Container(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  if (widget.showTitle) ...[
-                    Expanded(
-                      child: Text(
-                        widget.title ?? widget.config.titleText,
-                        style: widget.titleStyle ??
-                            const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                    ),
-                  ],
-                  if (widget.showCloseButton) ...[
-                    if (widget.closeButton != null)
-                      widget.closeButton!
-                    else
-                      IconButton(
-                        icon: Icon(widget.theme?.closeIcon ?? CountrifyIcons.x),
-                        onPressed: widget.onClose ?? () => Navigator.of(context).pop(),
-                      ),
-                  ],
-                ],
-              ),
-            ),
-            const Divider(height: 1),
-          ],
-
-          // Search bar
-          _buildSearchBar(),
-
-          // Countries list
-          Expanded(
-            child: config.enableScrollbar
-                ? Scrollbar(
-                    thumbVisibility: true,
-                    trackVisibility: true,
-                    thickness: theme?.scrollbarThickness ?? 6.0,
-                    radius: theme?.scrollbarRadius?.topLeft ?? const Radius.circular(3),
-                    child: _buildCountriesList(),
-                  )
-                : _buildCountriesList(),
-          ),
-        ],
-      ),
+      child: body,
     );
   }
 }
