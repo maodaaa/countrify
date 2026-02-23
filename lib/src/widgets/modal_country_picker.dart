@@ -1,8 +1,9 @@
 import 'package:countrify/src/icons/countrify_icons.dart';
-import 'package:flutter/material.dart';
 import 'package:countrify/src/models/country.dart';
 import 'package:countrify/src/models/country_code.dart';
 import 'package:countrify/src/widgets/country_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 /// {@template modal_country_picker}
 /// A modal country picker that can be easily shown as a bottom sheet or dialog
@@ -33,31 +34,38 @@ class ModalCountryPicker {
     bool useRootNavigator = false,
     RouteSettings? routeSettings,
   }) async {
-    return showModalBottomSheet<Country>(
+    return showMaterialModalBottomSheet<Country>(
       context: context,
       isDismissible: isDismissible,
       enableDrag: enableDrag,
-      isScrollControlled: isScrollControlled,
       backgroundColor: backgroundColor ?? Colors.transparent,
       elevation: elevation,
       shape: shape,
       clipBehavior: clipBehavior,
-      constraints: constraints,
       barrierColor: barrierColor,
-      useSafeArea: useSafeArea,
       useRootNavigator: useRootNavigator,
-      routeSettings: routeSettings,
-      builder: (context) => _CountryPickerModal(
-        theme: theme,
-        config: config ?? const CountryPickerConfig(),
-        initialCountryCode: initialCountryCode,
-        title: title,
-        showTitle: showTitle,
-        titleStyle: titleStyle,
-        closeButton: closeButton,
-        showCloseButton: showCloseButton,
-        onClose: onClose ?? () => Navigator.of(context).pop(),
-      ),
+      settings: routeSettings,
+      builder: (context) {
+        final Widget picker = _CountryPickerModal(
+          theme: theme,
+          config: config ?? const CountryPickerConfig(),
+          initialCountryCode: initialCountryCode,
+          title: title,
+          showTitle: showTitle,
+          titleStyle: titleStyle,
+          closeButton: closeButton,
+          showCloseButton: showCloseButton,
+          onClose: onClose ?? () => Navigator.of(context).pop(),
+        );
+
+        if (constraints != null) {
+          return ConstrainedBox(
+            constraints: constraints,
+            child: picker,
+          );
+        }
+        return picker;
+      },
     );
   }
 
@@ -227,8 +235,7 @@ class _CountryPickerFullScreen extends StatefulWidget {
   final VoidCallback onClose;
 
   @override
-  State<_CountryPickerFullScreen> createState() =>
-      _CountryPickerFullScreenState();
+  State<_CountryPickerFullScreen> createState() => _CountryPickerFullScreenState();
 }
 
 class _CountryPickerFullScreenState extends State<_CountryPickerFullScreen> {

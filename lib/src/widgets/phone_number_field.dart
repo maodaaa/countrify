@@ -9,6 +9,7 @@ import 'package:countrify/src/widgets/country_picker_config.dart';
 import 'package:countrify/src/widgets/country_picker_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 /// {@template phone_number_field}
 /// A text field for phone number input with an integrated country code picker
@@ -335,9 +336,8 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
 
   Future<Country?> _showBottomSheet() async {
     final pickerTheme = widget.theme ?? CountryPickerTheme.defaultTheme();
-    return showModalBottomSheet<Country>(
+    return showMaterialModalBottomSheet<Country>(
       context: context,
-      isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (ctx) => _ModalCountryList(
         theme: pickerTheme,
@@ -1015,6 +1015,8 @@ class _ModalCountryListState extends State<_ModalCountryList> {
 
     final body = Column(
       children: [
+        if (widget.isBottomSheet && widget.config?.bottomSheetDragHandleBuilder != null)
+          widget.config!.bottomSheetDragHandleBuilder!(context),
         if (widget.showHeader) _buildHeader(theme),
         if (widget.searchEnabled) _buildSearchBar(theme),
         Expanded(child: _buildList(theme)),

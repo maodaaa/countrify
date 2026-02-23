@@ -1,10 +1,12 @@
 import 'package:countrify/src/widgets/country_picker_config.dart';
 import 'package:flutter/material.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+
 import '../models/country.dart';
 import '../models/country_code.dart';
 import 'comprehensive_country_picker.dart';
-import 'country_picker_theme.dart';
 import 'country_picker_config.dart' as config;
+import 'country_picker_theme.dart';
 
 /// {@template modal_comprehensive_picker}
 /// Modal display methods for the comprehensive country picker
@@ -68,16 +70,13 @@ class ModalComprehensivePicker {
     bool barrierDismissible = true,
     RouteSettings? routeSettings,
   }) async {
-    final result = await showModalBottomSheet<Country>(
+    final result = await showMaterialModalBottomSheet<Country>(
       context: context,
       isDismissible: isDismissible,
       enableDrag: enableDrag,
-      isScrollControlled: isScrollControlled,
       useRootNavigator: useRootNavigator,
-      useSafeArea: useSafeArea,
       barrierColor: barrierColor ?? Colors.black54,
-      barrierLabel: barrierLabel ?? 'Close dialog',
-      routeSettings: routeSettings,
+      settings: routeSettings,
       backgroundColor: Colors.transparent,
       builder: (context) => ComprehensiveCountryPicker(
         initialCountryCode: initialCountryCode,

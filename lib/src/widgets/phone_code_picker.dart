@@ -308,6 +308,8 @@ class _PhoneCodePickerState extends State<PhoneCodePicker> with TickerProviderSt
       ),
       child: Column(
         children: [
+          if (config.bottomSheetDragHandleBuilder != null)
+            config.bottomSheetDragHandleBuilder!(context),
           _buildHeader(theme, config),
           if (_effectiveSearchEnabled) _buildSearchBar(theme, config),
           Expanded(child: _buildCountryList(theme, config)),

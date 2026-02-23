@@ -184,6 +184,7 @@ class CountryPickerConfig {
     this.emptyStateMessage = 'No countries found',
     this.selectCountryHintText = 'Select a country',
     this.emptyStateBuilder,
+    this.bottomSheetDragHandleBuilder,
     this.groupByRegion = false,
     this.groupBySubregion = false,
     this.sortByName = true,
@@ -271,6 +272,9 @@ class CountryPickerConfig {
   /// Optional builder to display a custom empty state widget when no countries are found.
   /// If provided, this overrides [emptyStateMessage] and [Theme.emptyStateIcon].
   final WidgetBuilder? emptyStateBuilder;
+
+  /// Optional builder to display a custom drag handle widget at the top of bottom sheets.
+  final WidgetBuilder? bottomSheetDragHandleBuilder;
 
   /// Whether to group countries by region
   final bool groupByRegion;
@@ -785,6 +789,8 @@ class _CountryPickerState extends State<CountryPicker> {
       ),
       child: Column(
         children: [
+          if (config.bottomSheetDragHandleBuilder != null)
+            config.bottomSheetDragHandleBuilder!(context),
           // Header
           if (widget.showTitle || widget.showCloseButton) ...[
             Container(

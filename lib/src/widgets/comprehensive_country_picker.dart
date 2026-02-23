@@ -475,6 +475,8 @@ class _ComprehensiveCountryPickerState extends State<ComprehensiveCountryPicker>
       ),
       child: Column(
         children: [
+          if (config.bottomSheetDragHandleBuilder != null)
+            config.bottomSheetDragHandleBuilder!(context),
           _buildHeader(theme, config),
           if (widget.searchEnabled) _buildSearchBar(theme, config),
           if (widget.filterEnabled) _buildFilterBar(theme, config),

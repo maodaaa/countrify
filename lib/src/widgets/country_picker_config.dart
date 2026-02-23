@@ -22,6 +22,7 @@ class CountryPickerConfig {
     this.emptyStateText = 'No countries found',
     this.selectCountryHintText = 'Select a country',
     this.emptyStateBuilder,
+    this.bottomSheetDragHandleBuilder,
   });
 
   /// Locale code for displaying country names in a specific language.
@@ -69,6 +70,9 @@ class CountryPickerConfig {
   /// If provided, this overrides [emptyStateText] and [Theme.emptyStateIcon].
   final WidgetBuilder? emptyStateBuilder;
 
+  /// Optional builder to display a custom drag handle widget at the top of bottom sheets.
+  final WidgetBuilder? bottomSheetDragHandleBuilder;
+
   /// Copy with method.
   CountryPickerConfig copyWith({
     String? locale,
@@ -85,6 +89,7 @@ class CountryPickerConfig {
     String? emptyStateText,
     String? selectCountryHintText,
     WidgetBuilder? emptyStateBuilder,
+    WidgetBuilder? bottomSheetDragHandleBuilder,
   }) {
     return CountryPickerConfig(
       locale: locale ?? this.locale,
@@ -101,6 +106,8 @@ class CountryPickerConfig {
       emptyStateText: emptyStateText ?? this.emptyStateText,
       selectCountryHintText: selectCountryHintText ?? this.selectCountryHintText,
       emptyStateBuilder: emptyStateBuilder ?? this.emptyStateBuilder,
+      bottomSheetDragHandleBuilder:
+          bottomSheetDragHandleBuilder ?? this.bottomSheetDragHandleBuilder,
     );
   }
 }
