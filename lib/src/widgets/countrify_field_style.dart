@@ -93,8 +93,7 @@ class CountrifyFieldStyle {
       fieldBorderRadius: radius,
       filled: true,
       fillColor: Colors.white,
-      contentPadding:
-          const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       counterText: '',
       enabledBorder: OutlineInputBorder(
         borderRadius: radius,
@@ -120,8 +119,8 @@ class CountrifyFieldStyle {
       prefixIconConstraints: const BoxConstraints(),
       cursorColor: Colors.blue,
       dividerColor: const Color(0xFFE0E0E0),
-      prefixPadding:
-          const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      prefixPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12)
+          .copyWith(right: 0),
     );
   }
 
@@ -180,8 +179,7 @@ class CountrifyFieldStyle {
     return CountrifyFieldStyle(
       fieldBorderRadius: borderRadius,
       filled: false,
-      contentPadding:
-          const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       counterText: '',
       enabledBorder: OutlineInputBorder(
         borderRadius: borderRadius,
@@ -209,8 +207,7 @@ class CountrifyFieldStyle {
       border: OutlineInputBorder(borderRadius: borderRadius),
       prefixIconConstraints: const BoxConstraints(),
       dividerColor: borderColor,
-      prefixPadding:
-          const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      prefixPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
     );
   }
 
@@ -224,8 +221,7 @@ class CountrifyFieldStyle {
       fieldBorderRadius: borderRadius,
       filled: true,
       fillColor: fillColor,
-      contentPadding:
-          const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       counterText: '',
       enabledBorder: OutlineInputBorder(
         borderRadius: borderRadius,
@@ -253,8 +249,7 @@ class CountrifyFieldStyle {
       ),
       prefixIconConstraints: const BoxConstraints(),
       dividerColor: const Color(0xFFE0E0E0),
-      prefixPadding:
-          const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      prefixPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
     );
   }
 
@@ -471,6 +466,7 @@ class CountrifyFieldStyle {
   InputDecoration toInputDecoration({
     Widget? prefixIconOverride,
     Widget? suffixIconOverride,
+    Widget? prefixOverride,
   }) {
     final radius = fieldBorderRadius ?? BorderRadius.circular(12);
 
@@ -501,7 +497,7 @@ class CountrifyFieldStyle {
       contentPadding: contentPadding,
       prefixIcon: prefixIconOverride ?? prefixIcon,
       prefixIconConstraints: prefixIconConstraints,
-      prefix: prefix,
+      prefix: prefixOverride ?? prefix,
       prefixText: prefixText,
       prefixStyle: prefixStyle,
       prefixIconColor: prefixIconColor,

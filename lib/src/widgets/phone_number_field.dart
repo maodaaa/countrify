@@ -435,6 +435,7 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
         key: _fieldKey,
         controller: _controller,
         focusNode: widget.focusNode,
+        textAlignVertical: TextAlignVertical.center,
         cursorColor: effectiveStyle.cursorColor ?? pickerTheme.searchCursorColor,
         enabled: widget.enabled,
         readOnly: widget.readOnly,
@@ -464,26 +465,16 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
       onTap: widget.pickerType == PickerOpenType.none ? null : _openCountryPicker,
       behavior: HitTestBehavior.opaque,
       child: Container(
-        padding: effectiveStyle.prefixPadding ??
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        padding: effectiveStyle.prefixPadding ?? EdgeInsets.zero,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (widget.showFlag && _selectedCountry != null) ...[
               _buildFlagImage(_selectedCountry!),
-              const SizedBox(width: 8),
-            ],
-            if (widget.showDialCode && dialCode.isNotEmpty)
-              Text(
-                dialCode,
-                style: effectiveStyle.dialCodeTextStyle ??
-                    pickerTheme.compactDialCodeTextStyle ??
-                    pickerTheme.countryNameTextStyle?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-              ),
-            if (widget.showDropdownIcon && widget.pickerType != PickerOpenType.none) ...[
               const SizedBox(width: 4),
+            ],
+            if (widget.showDropdownIcon && widget.pickerType != PickerOpenType.none) ...[
+              // const SizedBox(width: 4),
               AnimatedRotation(
                 turns: _isDropdownOpen ? 0.5 : 0,
                 duration: const Duration(milliseconds: 200),
@@ -494,13 +485,27 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
                       widget.enabled ? pickerTheme.headerIconColor ?? Colors.black54 : Colors.grey,
                 ),
               ),
+              const SizedBox(width: 8),
             ],
-            const SizedBox(width: 8),
+            if (!widget.showDropdownIcon) const SizedBox(width: 4),
             Container(
               width: 1,
-              height: 24,
+              height: 16,
               color: effectiveStyle.dividerColor ?? pickerTheme.borderColor ?? Colors.grey.shade300,
             ),
+            const SizedBox(width: 8),
+            if (widget.showDialCode && dialCode.isNotEmpty)
+              Padding(
+                padding: EdgeInsets.zero,
+                child: Text(
+                  dialCode,
+                  style: effectiveStyle.dialCodeTextStyle ??
+                      pickerTheme.compactDialCodeTextStyle ??
+                      pickerTheme.countryNameTextStyle?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+              ),
           ],
         ),
       ),
