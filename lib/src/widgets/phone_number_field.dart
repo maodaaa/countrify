@@ -46,6 +46,7 @@ class PhoneNumberField extends StatefulWidget {
     this.onCountryChanged,
     this.onSubmitted,
     this.onEditingComplete,
+    this.onTapOutside,
     this.inputFormatters,
     this.style,
     this.validator,
@@ -89,6 +90,9 @@ class PhoneNumberField extends StatefulWidget {
 
   /// Called when editing is complete.
   final VoidCallback? onEditingComplete;
+
+  /// Called for each tap that occurs outside of the text field.
+  final TapRegionCallback? onTapOutside;
 
   /// Optional list of [TextInputFormatter]s applied to the phone number field.
   /// Use this for validation, e.g. `FilteringTextInputFormatter.digitsOnly`.
@@ -448,6 +452,7 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
         validator: widget.validator,
         onFieldSubmitted: widget.onSubmitted,
         onEditingComplete: widget.onEditingComplete,
+        onTapOutside: widget.onTapOutside,
         decoration: decoration,
       ),
     );
