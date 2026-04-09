@@ -452,7 +452,10 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
         validator: widget.validator,
         onFieldSubmitted: widget.onSubmitted,
         onEditingComplete: widget.onEditingComplete,
-        onTapOutside: widget.onTapOutside,
+        onTapOutside: (PointerDownEvent event) {
+          FocusManager.instance.primaryFocus?.unfocus();
+          FocusScope.of(context).unfocus();
+        },
         decoration: decoration,
       ),
     );
@@ -770,6 +773,10 @@ class _DropdownOverlayState extends State<_DropdownOverlay> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 10, 12, 8),
       child: TextField(
+        onTapOutside: (PointerDownEvent event) {
+          FocusManager.instance.primaryFocus?.unfocus();
+          FocusScope.of(context).unfocus();
+        },
         controller: _searchController,
         onChanged: _onSearchChanged,
         style: theme.searchTextStyle,
@@ -1138,6 +1145,10 @@ class _ModalCountryListState extends State<_ModalCountryList> {
     return Container(
       padding: const EdgeInsets.all(16),
       child: TextField(
+        onTapOutside: (PointerDownEvent event) {
+          FocusManager.instance.primaryFocus?.unfocus();
+          FocusScope.of(context).unfocus();
+        },
         controller: _searchController,
         onChanged: _onSearchChanged,
         style: theme.searchTextStyle,
