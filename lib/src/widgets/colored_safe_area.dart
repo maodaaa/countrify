@@ -6,7 +6,7 @@ class ColoredSafeArea extends StatelessWidget {
     required this.child,
     super.key,
     this.color,
-    this.top = true,
+    this.top = false,
     this.bottom = true,
     this.borderRadius,
   });
@@ -14,7 +14,7 @@ class ColoredSafeArea extends StatelessWidget {
   /// The widget to wrap.
   final Widget child;
 
-  /// The background color for the safe area. Defaults to white.
+  /// The background color for the safe area. Defaults to transparent.
   final Color? color;
 
   /// Whether to apply safe area padding to the top.
@@ -29,7 +29,7 @@ class ColoredSafeArea extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget content = ColoredBox(
-      color: color ?? Colors.white,
+      color: color ?? Colors.transparent,
       child: SafeArea(
         top: top,
         bottom: bottom,

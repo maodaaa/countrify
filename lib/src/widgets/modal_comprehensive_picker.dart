@@ -1,7 +1,6 @@
-import 'package:countrify/src/widgets/colored_safe_area.dart';
 import 'package:countrify/src/widgets/country_picker_config.dart';
 import 'package:flutter/material.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:stupid_simple_sheet/stupid_simple_sheet.dart';
 
 import '../models/country.dart';
 import '../models/country_code.dart';
@@ -51,13 +50,14 @@ class ModalComprehensivePicker {
     String filterAllText = 'All',
     String filterCancelText = 'Cancel',
     String filterApplyText = 'Apply',
-    Widget Function(BuildContext context, Country country, bool isSelected)? customCountryBuilder,
+    Widget Function(BuildContext context, Country country, bool isSelected)?
+        customCountryBuilder,
     Widget Function(BuildContext context)? customHeaderBuilder,
-    Widget Function(
-            BuildContext context, TextEditingController controller, ValueChanged<String> onChanged)?
+    Widget Function(BuildContext context, TextEditingController controller,
+            ValueChanged<String> onChanged)?
         customSearchBuilder,
-    Widget Function(
-            BuildContext context, CountryFilter filter, ValueChanged<CountryFilter> onChanged)?
+    Widget Function(BuildContext context, CountryFilter filter,
+            ValueChanged<CountryFilter> onChanged)?
         customFilterBuilder,
     bool hapticFeedback = true,
     Duration animationDuration = const Duration(milliseconds: 300),
@@ -72,82 +72,84 @@ class ModalComprehensivePicker {
     bool barrierDismissible = true,
     RouteSettings? routeSettings,
   }) async {
-    final result = await showMaterialModalBottomSheet<Country>(
-      context: context,
-      isDismissible: isDismissible,
-      enableDrag: enableDrag,
-      useRootNavigator: useRootNavigator,
-      barrierColor: barrierColor ?? Colors.black54,
-      settings: routeSettings,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        final effectiveConfig = config ?? const CountryPickerConfig();
-        Widget picker = ComprehensiveCountryPicker(
-          initialCountryCode: initialCountryCode,
-          onCountrySelected: onCountrySelected,
-          onCountryChanged: onCountryChanged,
-          onSearchChanged: onSearchChanged,
-          onFilterChanged: onFilterChanged,
-          theme: theme,
-          config: effectiveConfig,
-          pickerType: CountryPickerType.bottomSheet,
-          showCloseButton: showCloseButton,
-          showPhoneCode: showPhoneCode,
-          showFlag: showFlag,
-          showCountryName: showCountryName,
-          showCapital: showCapital,
-          showRegion: showRegion,
-          showPopulation: showPopulation,
-          searchEnabled: searchEnabled,
-          filterEnabled: filterEnabled,
-          enableScrollbar: enableScrollbar,
-          searchDebounceMs: searchDebounceMs,
-          sortBy: sortBy,
-          includeIndependent: includeIndependent,
-          includeUnMembers: includeUnMembers,
-          maxHeight: maxHeight,
-          minHeight: minHeight,
-          dropdownMaxHeight: dropdownMaxHeight,
-          flagSize: flagSize,
-          flagShape: flagShape,
-          flagShadowColor: flagShadowColor,
-          flagShadowBlur: flagShadowBlur,
-          flagShadowOffset: flagShadowOffset,
-          filterTitleText: filterTitleText,
-          filterSortByText: filterSortByText,
-          filterRegionsText: filterRegionsText,
-          filterAllText: filterAllText,
-          filterCancelText: filterCancelText,
-          filterApplyText: filterApplyText,
-          customCountryBuilder: customCountryBuilder,
-          customHeaderBuilder: customHeaderBuilder,
-          customSearchBuilder: customSearchBuilder,
-          customFilterBuilder: customFilterBuilder,
-          hapticFeedback: hapticFeedback,
-          animationDuration: animationDuration,
-          debounceDuration: debounceDuration,
-        );
+    final result = await Navigator.of(
+      context,
+      rootNavigator: useRootNavigator,
+    ).push<Country>(
+      StupidSimpleSheetRoute<Country>(
+        barrierDismissible: isDismissible && barrierDismissible,
+        draggable: enableDrag,
+        barrierColor: barrierColor ?? Colors.black54,
+        barrierLabel: barrierLabel,
+        originateAboveBottomViewInset: true,
+        settings: routeSettings,
+        child: Builder(
+          builder: (context) {
+            final effectiveConfig =
+                config ?? CountryPickerConfig(useSafeArea: useSafeArea);
+            final Widget picker = ComprehensiveCountryPicker(
+              initialCountryCode: initialCountryCode,
+              onCountrySelected: onCountrySelected,
+              onCountryChanged: onCountryChanged,
+              onSearchChanged: onSearchChanged,
+              onFilterChanged: onFilterChanged,
+              theme: theme,
+              config: effectiveConfig,
+              pickerType: CountryPickerType.bottomSheet,
+              showCloseButton: showCloseButton,
+              showPhoneCode: showPhoneCode,
+              showFlag: showFlag,
+              showCountryName: showCountryName,
+              showCapital: showCapital,
+              showRegion: showRegion,
+              showPopulation: showPopulation,
+              searchEnabled: searchEnabled,
+              filterEnabled: filterEnabled,
+              enableScrollbar: enableScrollbar,
+              searchDebounceMs: searchDebounceMs,
+              sortBy: sortBy,
+              includeIndependent: includeIndependent,
+              includeUnMembers: includeUnMembers,
+              maxHeight: maxHeight,
+              minHeight: minHeight,
+              dropdownMaxHeight: dropdownMaxHeight,
+              flagSize: flagSize,
+              flagShape: flagShape,
+              flagShadowColor: flagShadowColor,
+              flagShadowBlur: flagShadowBlur,
+              flagShadowOffset: flagShadowOffset,
+              filterTitleText: filterTitleText,
+              filterSortByText: filterSortByText,
+              filterRegionsText: filterRegionsText,
+              filterAllText: filterAllText,
+              filterCancelText: filterCancelText,
+              filterApplyText: filterApplyText,
+              customCountryBuilder: customCountryBuilder,
+              customHeaderBuilder: customHeaderBuilder,
+              customSearchBuilder: customSearchBuilder,
+              customFilterBuilder: customFilterBuilder,
+              hapticFeedback: hapticFeedback,
+              animationDuration: animationDuration,
+              debounceDuration: debounceDuration,
+            );
 
-        if (effectiveConfig.useSafeArea) {
-          picker = ClipRRect(
-            borderRadius:
-                theme?.borderRadius ?? const BorderRadius.vertical(top: Radius.circular(20)),
-            child: ColoredSafeArea(
-              color: effectiveConfig.safeAreaColor,
-              top: effectiveConfig.safeAreaTop,
-              bottom: effectiveConfig.safeAreaBottom,
-              child: picker,
-            ),
-          );
-        }
-
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: picker,
-        );
-      },
+            return ScrollConfiguration(
+              behavior: const ScrollDragBehavior(
+                parent: MaterialScrollBehavior(),
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom,
+                  ),
+                  child: picker,
+                ),
+              ),
+            );
+          },
+        ),
+      ),
     );
     return result;
   }
@@ -190,13 +192,14 @@ class ModalComprehensivePicker {
     String filterAllText = 'All',
     String filterCancelText = 'Cancel',
     String filterApplyText = 'Apply',
-    Widget Function(BuildContext context, Country country, bool isSelected)? customCountryBuilder,
+    Widget Function(BuildContext context, Country country, bool isSelected)?
+        customCountryBuilder,
     Widget Function(BuildContext context)? customHeaderBuilder,
-    Widget Function(
-            BuildContext context, TextEditingController controller, ValueChanged<String> onChanged)?
+    Widget Function(BuildContext context, TextEditingController controller,
+            ValueChanged<String> onChanged)?
         customSearchBuilder,
-    Widget Function(
-            BuildContext context, CountryFilter filter, ValueChanged<CountryFilter> onChanged)?
+    Widget Function(BuildContext context, CountryFilter filter,
+            ValueChanged<CountryFilter> onChanged)?
         customFilterBuilder,
     bool hapticFeedback = true,
     Duration animationDuration = const Duration(milliseconds: 300),
@@ -306,13 +309,14 @@ class ModalComprehensivePicker {
     String filterAllText = 'All',
     String filterCancelText = 'Cancel',
     String filterApplyText = 'Apply',
-    Widget Function(BuildContext context, Country country, bool isSelected)? customCountryBuilder,
+    Widget Function(BuildContext context, Country country, bool isSelected)?
+        customCountryBuilder,
     Widget Function(BuildContext context)? customHeaderBuilder,
-    Widget Function(
-            BuildContext context, TextEditingController controller, ValueChanged<String> onChanged)?
+    Widget Function(BuildContext context, TextEditingController controller,
+            ValueChanged<String> onChanged)?
         customSearchBuilder,
-    Widget Function(
-            BuildContext context, CountryFilter filter, ValueChanged<CountryFilter> onChanged)?
+    Widget Function(BuildContext context, CountryFilter filter,
+            ValueChanged<CountryFilter> onChanged)?
         customFilterBuilder,
     bool hapticFeedback = true,
     Duration animationDuration = const Duration(milliseconds: 300),
@@ -320,7 +324,8 @@ class ModalComprehensivePicker {
     bool useRootNavigator = false,
     RouteSettings? routeSettings,
   }) async {
-    final result = await Navigator.of(context, rootNavigator: useRootNavigator).push<Country>(
+    final result = await Navigator.of(context, rootNavigator: useRootNavigator)
+        .push<Country>(
       MaterialPageRoute<Country>(
         settings: routeSettings,
         builder: (context) {
@@ -462,13 +467,14 @@ class ModalComprehensivePicker {
     String filterAllText = 'All',
     String filterCancelText = 'Cancel',
     String filterApplyText = 'Apply',
-    Widget Function(BuildContext context, Country country, bool isSelected)? customCountryBuilder,
+    Widget Function(BuildContext context, Country country, bool isSelected)?
+        customCountryBuilder,
     Widget Function(BuildContext context)? customHeaderBuilder,
-    Widget Function(
-            BuildContext context, TextEditingController controller, ValueChanged<String> onChanged)?
+    Widget Function(BuildContext context, TextEditingController controller,
+            ValueChanged<String> onChanged)?
         customSearchBuilder,
-    Widget Function(
-            BuildContext context, CountryFilter filter, ValueChanged<CountryFilter> onChanged)?
+    Widget Function(BuildContext context, CountryFilter filter,
+            ValueChanged<CountryFilter> onChanged)?
         customFilterBuilder,
     bool hapticFeedback = true,
     Duration animationDuration = const Duration(milliseconds: 300),

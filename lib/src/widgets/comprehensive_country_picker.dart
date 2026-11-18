@@ -485,7 +485,7 @@ class _ComprehensiveCountryPickerState extends State<ComprehensiveCountryPicker>
 
     if (config.useSafeArea) {
       body = ColoredSafeArea(
-        color: config.safeAreaColor,
+        color: config.safeAreaColor ?? theme.backgroundColor,
         top: config.safeAreaTop,
         bottom: config.safeAreaBottom,
         borderRadius: theme.borderRadius ?? const BorderRadius.vertical(top: Radius.circular(20)),
@@ -1009,17 +1009,24 @@ class _ComprehensiveCountryPickerState extends State<ComprehensiveCountryPicker>
             ? Border.all(color: theme.countryItemSelectedBorderColor ?? Colors.blue)
             : null,
       ),
-      child: ListTile(
-        onTap:
-            widget.pickerType == CountryPickerType.none ? null : () => _onCountrySelected(country),
-        leading: widget.showFlag ? _buildFlag(country, theme, config) : null,
-        title: widget.showCountryName ? _buildCountryName(country, theme) : null,
-        subtitle: _buildCountrySubtitle(country, theme, config),
-        trailing: isSelected
-            ? Icon(theme.selectedIcon ?? CountrifyIcons.circleCheckBig,
-                color: theme.countryItemSelectedIconColor)
-            : null,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: Material(
+        type: MaterialType.transparency,
+        child: ListTile(
+          shape: RoundedRectangleBorder(
+            borderRadius:
+                theme.countryItemBorderRadius ?? const BorderRadius.all(Radius.circular(8)),
+          ),
+          onTap:
+              widget.pickerType == CountryPickerType.none ? null : () => _onCountrySelected(country),
+          leading: widget.showFlag ? _buildFlag(country, theme, config) : null,
+          title: widget.showCountryName ? _buildCountryName(country, theme) : null,
+          subtitle: _buildCountrySubtitle(country, theme, config),
+          trailing: isSelected
+              ? Icon(theme.selectedIcon ?? CountrifyIcons.circleCheckBig,
+                  color: theme.countryItemSelectedIconColor)
+              : null,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        ),
       ),
     );
   }

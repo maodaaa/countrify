@@ -7,6 +7,7 @@ import 'package:countrify/src/widgets/countrify_field_style.dart';
 import 'package:countrify/src/widgets/country_picker_config.dart';
 import 'package:countrify/src/widgets/country_picker_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:stupid_simple_sheet/stupid_simple_sheet.dart';
 
 /// {@template country_dropdown_field}
 /// A text field-style dropdown for selecting countries with consistent styling.
@@ -134,25 +135,36 @@ class _CountryDropdownFieldState extends State<CountryDropdownField> {
   }
 
   Future<Country?> _showBottomSheetPicker() async {
-    return showModalBottomSheet<Country>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (sheetContext) => Container(
-        height: MediaQuery.sizeOf(sheetContext).height * 0.8,
-        decoration: BoxDecoration(
-          color: widget.theme?.backgroundColor ?? Colors.white,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: ComprehensiveCountryPicker(
-          initialCountryCode:
-              CountryCodeExtension.fromAlpha2Code(_selectedCountry?.alpha2Code ?? ''),
-          theme: widget.theme,
-          config: widget.config,
-          showPhoneCode: widget.showPhoneCode,
-          showFlag: widget.showFlag,
-          searchEnabled: widget.searchEnabled,
-          filterEnabled: widget.filterEnabled,
+    return Navigator.of(context).push<Country>(
+      StupidSimpleSheetRoute<Country>(
+        barrierColor: Colors.black54,
+        originateAboveBottomViewInset: true,
+        child: Builder(
+          builder: (sheetContext) => ScrollConfiguration(
+            behavior: const ScrollDragBehavior(
+              parent: MaterialScrollBehavior(),
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                height: MediaQuery.sizeOf(sheetContext).height * 0.8,
+                decoration: BoxDecoration(
+                  color: widget.theme?.backgroundColor ?? Colors.white,
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                child: ComprehensiveCountryPicker(
+                  initialCountryCode:
+                      CountryCodeExtension.fromAlpha2Code(_selectedCountry?.alpha2Code ?? ''),
+                  theme: widget.theme,
+                  config: widget.config,
+                  showPhoneCode: widget.showPhoneCode,
+                  showFlag: widget.showFlag,
+                  searchEnabled: widget.searchEnabled,
+                  filterEnabled: widget.filterEnabled,
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );

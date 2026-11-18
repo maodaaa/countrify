@@ -10,7 +10,7 @@ import 'package:countrify/src/widgets/country_picker_config.dart';
 import 'package:countrify/src/widgets/country_picker_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:stupid_simple_sheet/stupid_simple_sheet.dart';
 
 /// {@template phone_number_field}
 /// A text field for phone number input with an integrated country code picker
@@ -341,23 +341,35 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
 
   Future<Country?> _showBottomSheet() async {
     final pickerTheme = widget.theme ?? CountryPickerTheme.defaultTheme();
-    return showMaterialModalBottomSheet<Country>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(ctx).viewInsets.bottom,
-        ),
-        child: _ModalCountryList(
-          theme: pickerTheme,
-          searchEnabled: _effectiveSearchEnabled,
-          config: widget.config,
-          selectedCountry: _selectedCountry,
-          showFlag: widget.showFlag,
-          flagSize: widget.flagSize,
-          flagBorderRadius: widget.flagBorderRadius,
-          onSelected: (c) => Navigator.pop(ctx, c),
-          isBottomSheet: true,
+    return Navigator.of(context).push<Country>(
+      StupidSimpleSheetRoute<Country>(
+        barrierColor: Colors.black54,
+        originateAboveBottomViewInset: true,
+        child: Builder(
+          builder: (ctx) => ScrollConfiguration(
+            behavior: const ScrollDragBehavior(
+              parent: MaterialScrollBehavior(),
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(ctx).viewInsets.bottom,
+                ),
+                child: _ModalCountryList(
+                  theme: pickerTheme,
+                  searchEnabled: _effectiveSearchEnabled,
+                  config: widget.config,
+                  selectedCountry: _selectedCountry,
+                  showFlag: widget.showFlag,
+                  flagSize: widget.flagSize,
+                  flagBorderRadius: widget.flagBorderRadius,
+                  onSelected: (c) => Navigator.pop(ctx, c),
+                  isBottomSheet: true,
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -1049,8 +1061,8 @@ class _ModalCountryListState extends State<_ModalCountryList> {
     if (widget.isBottomSheet) {
       if (widget.config?.useSafeArea ?? true) {
         body = ColoredSafeArea(
-          color: widget.config?.safeAreaColor,
-          top: widget.config?.safeAreaTop ?? true,
+          color: widget.config?.safeAreaColor ?? theme.backgroundColor ?? Colors.white,
+          top: widget.config?.safeAreaTop ?? false,
           bottom: widget.config?.safeAreaBottom ?? true,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           child: body,
@@ -1186,42 +1198,45 @@ class _ModalCountryListState extends State<_ModalCountryList> {
         final country = _filtered[index];
         final isSelected = widget.selectedCountry?.alpha2Code == country.alpha2Code;
 
-        return ListTile(
-          onTap: () => widget.onSelected(country),
-          dense: true,
-          selected: isSelected,
-          selectedTileColor: theme.countryItemSelectedColor,
-          leading: widget.showFlag
-              ? Container(
-                  width: widget.flagSize.width,
-                  height: widget.flagSize.height,
-                  decoration: BoxDecoration(
-                    borderRadius: widget.flagBorderRadius,
-                    border: Border.all(color: Colors.grey.shade300, width: 0.5),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: widget.flagBorderRadius,
-                    child: Image.asset(
-                      country.flagImagePath,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => ColoredBox(
-                        color: Colors.grey.shade300,
-                        child: Center(child: Text(country.flagEmoji)),
+        return Material(
+          type: MaterialType.transparency,
+          child: ListTile(
+            onTap: () => widget.onSelected(country),
+            dense: true,
+            selected: isSelected,
+            selectedTileColor: theme.countryItemSelectedColor,
+            leading: widget.showFlag
+                ? Container(
+                    width: widget.flagSize.width,
+                    height: widget.flagSize.height,
+                    decoration: BoxDecoration(
+                      borderRadius: widget.flagBorderRadius,
+                      border: Border.all(color: Colors.grey.shade300, width: 0.5),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: widget.flagBorderRadius,
+                      child: Image.asset(
+                        country.flagImagePath,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => ColoredBox(
+                          color: Colors.grey.shade300,
+                          child: Center(child: Text(country.flagEmoji)),
+                        ),
                       ),
                     ),
+                  )
+                : null,
+            title: Text(_displayName(country),
+                style: theme.countryNameTextStyle, maxLines: 1, overflow: TextOverflow.ellipsis),
+            trailing: Text(
+              '+${country.callingCodes.first}',
+              style: theme.compactDialCodeTextStyle?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ) ??
+                  theme.countrySubtitleTextStyle?.copyWith(
+                    fontWeight: FontWeight.w600,
                   ),
-                )
-              : null,
-          title: Text(_displayName(country),
-              style: theme.countryNameTextStyle, maxLines: 1, overflow: TextOverflow.ellipsis),
-          trailing: Text(
-            '+${country.callingCodes.first}',
-            style: theme.compactDialCodeTextStyle?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ) ??
-                theme.countrySubtitleTextStyle?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            ),
           ),
         );
       },

@@ -471,7 +471,7 @@ class _MyHomePageState extends State<MyHomePage> {
               showPhoneCode: false,
               showFlag: true,
               searchEnabled: true,
-              pickerType: PickerDisplayType.none,
+              pickerType: PickerDisplayType.bottomSheet,
               theme: _codeableLightTheme,
             ),
             const SizedBox(height: 28),
@@ -555,7 +555,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               initialCountryCode: CountryCode.ad,
               theme: _codeableLightTheme,
-              pickerType: PickerOpenType.none,
+              pickerType: PickerOpenType.dropdown,
               showDropdownIcon: true,
               config: const CountryPickerConfig(
                 enableSearch: false,

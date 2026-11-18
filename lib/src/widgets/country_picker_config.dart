@@ -27,7 +27,7 @@ class CountryPickerConfig {
     this.centerTitle = false,
     this.useSafeArea = true,
     this.safeAreaColor,
-    this.safeAreaTop = true,
+    this.safeAreaTop = false,
     this.safeAreaBottom = true,
   });
 
@@ -88,10 +88,10 @@ class CountryPickerConfig {
   /// Whether to wrap the picker content in a [ColoredSafeArea]. Defaults to true.
   final bool useSafeArea;
 
-  /// Optional background color for the [ColoredSafeArea]. Defaults to white.
+  /// Optional background color for the [ColoredSafeArea]. Defaults to the picker background color.
   final Color? safeAreaColor;
 
-  /// Whether to apply safe area padding to the top. Defaults to true.
+  /// Whether to apply safe area padding to the top. Defaults to false.
   final bool safeAreaTop;
 
   /// Whether to apply safe area padding to the bottom. Defaults to true.

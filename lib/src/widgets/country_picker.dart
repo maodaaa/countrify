@@ -191,7 +191,7 @@ class CountryPickerConfig {
     this.centerTitle = false,
     this.useSafeArea = true,
     this.safeAreaColor,
-    this.safeAreaTop = true,
+    this.safeAreaTop = false,
     this.safeAreaBottom = true,
     this.groupByRegion = false,
     this.groupBySubregion = false,
@@ -293,10 +293,10 @@ class CountryPickerConfig {
   /// Whether to wrap the picker content in a [ColoredSafeArea]. Defaults to true.
   final bool useSafeArea;
 
-  /// Optional background color for the [ColoredSafeArea]. Defaults to white.
+  /// Optional background color for the [ColoredSafeArea]. Defaults to the picker background color.
   final Color? safeAreaColor;
 
-  /// Whether to apply safe area padding to the top. Defaults to true.
+  /// Whether to apply safe area padding to the top. Defaults to false.
   final bool safeAreaTop;
 
   /// Whether to apply safe area padding to the bottom. Defaults to true.
@@ -786,6 +786,7 @@ class _CountryPickerState extends State<CountryPicker> {
     }
 
     return ListView.separated(
+      padding: EdgeInsets.zero,
       itemCount: _filteredCountries.length,
       separatorBuilder: (context, index) {
         if (!widget.config.enableDivider) return const SizedBox.shrink();
@@ -868,7 +869,7 @@ class _CountryPickerState extends State<CountryPicker> {
 
     if (config.useSafeArea) {
       body = ColoredSafeArea(
-        color: config.safeAreaColor,
+        color: config.safeAreaColor ?? theme?.backgroundColor ?? Colors.white,
         top: config.safeAreaTop,
         bottom: config.safeAreaBottom,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
