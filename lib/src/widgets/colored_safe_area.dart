@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// A wrapper that applies a safe area with a customizable background color.
 class ColoredSafeArea extends StatelessWidget {

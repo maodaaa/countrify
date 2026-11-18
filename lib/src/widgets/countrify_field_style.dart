@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// {@template countrify_field_style}
 /// A single, modular style class for the Countrify field widgets.

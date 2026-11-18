@@ -1,5 +1,5 @@
 import 'package:countrify/src/icons/countrify_icons.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// {@template country_picker_theme}
 /// Comprehensive theme configuration for the country picker

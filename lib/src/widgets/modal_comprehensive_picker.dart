@@ -1,5 +1,5 @@
 import 'package:countrify/src/widgets/country_picker_config.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:stupid_simple_sheet/stupid_simple_sheet.dart';
 
 import '../models/country.dart';

@@ -7,7 +7,7 @@ import 'package:countrify/src/utils/country_utils.dart';
 import 'package:countrify/src/widgets/colored_safe_area.dart';
 import 'package:countrify/src/widgets/country_picker_config.dart';
 import 'package:countrify/src/widgets/country_picker_theme.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 
 /// {@template comprehensive_country_picker}

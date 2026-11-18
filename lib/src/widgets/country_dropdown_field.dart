@@ -6,7 +6,7 @@ import 'package:countrify/src/widgets/comprehensive_country_picker.dart';
 import 'package:countrify/src/widgets/countrify_field_style.dart';
 import 'package:countrify/src/widgets/country_picker_config.dart';
 import 'package:countrify/src/widgets/country_picker_theme.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:stupid_simple_sheet/stupid_simple_sheet.dart';
 
 /// {@template country_dropdown_field}

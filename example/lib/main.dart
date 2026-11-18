@@ -1,7 +1,8 @@
 import 'package:countrify/countrify.dart';
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart' as f;
 
 void main() {
   runApp(const MyApp());
@@ -63,7 +64,7 @@ class MyApp extends StatelessWidget {
       ],
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
+        f.GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
       theme: ThemeData(

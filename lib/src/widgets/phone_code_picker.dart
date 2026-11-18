@@ -9,7 +9,7 @@ import 'package:countrify/src/widgets/comprehensive_country_picker.dart';
 import 'package:countrify/src/widgets/country_picker_config.dart'
     as picker_config;
 import 'package:countrify/src/widgets/country_picker_theme.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 
 /// {@template phone_code_picker}

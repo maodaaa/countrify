@@ -1,6 +1,6 @@
 name: countrify_example
 description: Example app for the Countrify package
-publish_to: 'none'
+publish_to: "none"
 
 version: 1.0.0+1
 
@@ -16,6 +16,8 @@ dependencies:
   countrify:
     path: ../
 
+  material_ui: any
+  cupertino_ui: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

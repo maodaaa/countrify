@@ -19,10 +19,13 @@ environment:
   flutter: ">=3.0.0"
 
 dependencies:
+  cupertino_ui: any
+
   flutter:
     sdk: flutter
-  stupid_simple_sheet: ^1.0.0-dev.7
 
+  stupid_simple_sheet: ^1.0.0-dev.7
+  material_ui: any
 dev_dependencies:
   csv: ^6.0.0
   flutter_lints: ^3.0.0
